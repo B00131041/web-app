@@ -37,3 +37,24 @@ stages:
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
           $(tag)
+
+  - stage: Deploy
+    displayName: "Deploy to Azure Container Instances"
+    dependsOn: Build
+    jobs:
+      - job: Deploy
+        pool:
+          vmImage: "ubuntu-latest"
+        steps:
+          - task: AzureCLI@2
+            inputs:
+              azureSubscription: "Your-Azure-Service-Connection-Name"
+              scriptType: "bash"
+              scriptLocation: "inlineScript"
+              inlineScript: |
+                az container create \
+                  --name my-web-app-instance \
+                  --resource-group myResourceGroup \
+                  --image $(ACRLoginServer)/$(imageName):$(Build.BuildId) \
+                  --dns-name-label my-web-app \
+                  --ports 80
