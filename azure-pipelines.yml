@@ -54,7 +54,7 @@ stages:
                 az container create \
                   --resource-group ca2registry \
                   --name bwebapp-container \
-                  --image $(ca2registry)/$(bwebapp):$(latest) \
+                  --image $(containerRegistry)/$(imageRepository):latest \
                   --dns-name-label bwebapp-container \
                   --ports 80 \
                   --environment-variables PORT=$(PORT)
