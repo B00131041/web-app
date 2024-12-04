@@ -51,21 +51,14 @@ stages:
               scriptType: bash
               scriptLocation: inlineScript
               inlineScript: |
-  # Get registry credentials
-  ACR_USERNAME=$(az acr credential show --name <ACR_Name> --query "username" --output tsv)
-  ACR_PASSWORD=$(az acr credential show --name <ACR_Name> --query "passwords[0].value" --output tsv)
-  
-  echo "ACR Username: $ACR_USERNAME"  # Debug to ensure values are retrieved
-  echo "Deploying container from $(containerRegistry)/$(imageRepository):latest"
-              
+
+                  az login --identity  
+                  az acr login --name $(containerRegistry)
+
                 az container create \
                   --resource-group ca2registry \
                   --name bwebapp-container \
                   --image $(containerRegistry)/$(imageRepository):latest \
                   --dns-name-label bwebapp-container \
-# --registry-login-server ca2registry.azurecr.io \
-    --registry-username $ACR_USERNAME \
-    --registry-password $ACR_PASSWORD \
-
                   --ports 80 \
                   --environment-variables PORT=$(PORT)
