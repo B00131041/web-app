@@ -34,7 +34,7 @@ stages:
               tags: |
                 $(tag)
 
-#this part triggers error
+#ACR this part triggers error
   - stage: Deploy
     displayName: Deploy to Azure Container Instances (ACI)
     dependsOn: Build
@@ -52,8 +52,8 @@ stages:
               scriptLocation: inlineScript
               inlineScript: |
                 az acr login --name $(containerRegistry) 
-                
                 az container create \
+                  --registry-username ca2registry.azurecr.io
                   --resource-group ca2registry \
                   --name bwebapp-container \
                   --image $(containerRegistry)/$(imageRepository):latest \
