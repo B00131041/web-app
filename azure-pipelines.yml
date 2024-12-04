@@ -51,7 +51,7 @@ stages:
               scriptType: bash
               scriptLocation: inlineScript
               inlineScript: |
-                docker login ca2registry
+                az acr login --name $(containerRegistry) 
                 
                 az container create \
                   --resource-group ca2registry \
