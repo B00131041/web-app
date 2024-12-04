@@ -51,6 +51,10 @@ stages:
               scriptType: bash
               scriptLocation: inlineScript
               inlineScript: |
+                az login --identity
+                
+                az acr login --name $(containerRegistry)
+                
                 az container create \
                   --resource-group ca2registry \
                   --name bwebapp-container \
