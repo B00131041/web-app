@@ -56,6 +56,6 @@ stages:
                   --name bwebapp-container \
                   --image $(containerRegistry)/$(imageRepository):latest \
                   --dns-name-label bwebapp-container \
-                  --registry-login-server $(containerRegistry) \
+                  --registry-login-server ca2registry.azurecr.io \
                   --ports 80 \
                   --environment-variables PORT=$(PORT)
