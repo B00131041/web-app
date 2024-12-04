@@ -53,7 +53,7 @@ stages:
               inlineScript: |
                 az login --identity
                 
-                az acr login --name $(containerRegistry)
+                az acr login --name ca2registry
                 
                 az container create \
                   --resource-group ca2registry \
