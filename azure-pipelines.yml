@@ -34,40 +34,28 @@ stages:
               tags: |
                 $(tag)
 
+#this part triggers error
   - stage: Deploy
     displayName: Deploy to Azure Container Instances (ACI)
-    dependsOn: Build  # Ensures this stage runs after the Build stage
+    dependsOn: Build
     jobs:
       - job: Deploy
         displayName: Deploy Docker Image to ACI
         pool:
-          vmImage: $(vmImageName)  # Use the same VM image as the Build stage
+          vmImage: $(vmImageName)
         steps:
-          # Step 1: Login to Azure
           - task: AzureCLI@2
-            displayName: Login to Azure
+            displayName: Deploy Docker Container to ACI
             inputs:
-              azureSubscription: $(dockerRegistryServiceConnection)
+              azureSubscription: 'AzureRMConnection'
               scriptType: bash
               scriptLocation: inlineScript
               inlineScript: |
-                az login --service-principal -u $(azureSubscription) -p $(AZURE_SECRET) --tenant $(AZURE_TENANT_ID)
-
-          # Step 2: Deploy Docker Container to ACI
-          - task: AzureCLI@2
-            displayName: Deploy Docker Container to Azure Container Instances (ACI)
-            inputs:
-              azureSubscription: $(dockerRegistryServiceConnection)
-              scriptType: bash
-              scriptLocation: inlineScript
-              inlineScript: |
+                az acr login --name ca2registry
                 az container create \
-                  --resource-group myResourceGroup \  # Replace with your resource group name
-                  --name bwebapp-container \  # The name of the ACI instance
-                  --image $(containerRegistry)/$(imageRepository):$(tag) \  # Pull the image from ACR
-                  --dns-name-label bwebapp-container \  # DNS name for the ACI instance
-                  --ports 80 \  # Expose port 80
-                  --environment-variables PORT=$(PORT) \  # Pass environment variables
-                  --registry-login-server $(containerRegistry) \
-                  --registry-username $(dockerRegistryServiceConnection) \
-                  --registry-password $(AZURE_CONTAINER_REGISTRY_PASSWORD)
+                  --resource-group ca2registry \
+                  --name bwebapp-container \
+                  --image $(containerRegistry)/$(imageRepository):latest \
+                  --dns-name-label bwebapp-container \
+                  --ports 80 \
+                  --environment-variables PORT=$(PORT)
