@@ -34,6 +34,12 @@ stages:
               tags: |
                 $(tag)
 
+az acr login --name $(containerRegistry)
+
+# Fetch the registry credentials
+ACR_USER=$(az acr credential show --name $(containerRegistry) --query "username" -o tsv)
+ACR_PASS=$(az acr credential show --name $(containerRegistry) --query "passwords[0].value" -o tsv)
+
 #ACR this part triggers error
   - stage: Deploy
     displayName: Deploy to Azure Container Instances (ACI)
@@ -51,7 +57,6 @@ stages:
               scriptType: bash
               scriptLocation: inlineScript
               inlineScript: |
-                az acr login --name $(containerRegistry) 
                 az container create \
                   --registry-username ca2registry.azurecr.io
                   --resource-group ca2registry \
@@ -60,3 +65,5 @@ stages:
                   --dns-name-label bwebapp-container \
                   --ports 80 \
                   --environment-variables PORT=$(PORT)
+                  --registry-username $ACR_USER \
+                  --registry-password $ACR_PASS
