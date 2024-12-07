@@ -1,6 +1,5 @@
 import express from 'express'; 
-const app = express();
-const PORT = 3000;
+import app from '../server';
 
 // Middleware to parse JSON data from incoming requests
 app.use(express.json());  // POST requests as JSON
