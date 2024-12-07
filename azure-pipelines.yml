@@ -34,6 +34,38 @@ stages:
               tags: |
                 $(tag)
 
+#testing part
+  - stage: Test
+    displayName: Test Stage
+    dependsOn: Build
+    jobs:
+      - job: Test
+        displayName: Run Unit Tests
+        pool:
+          vmImage: $(vmImageName)
+        steps:
+          - task: UseNode@1
+            displayName: Install Node.js
+            inputs:
+              version: '16.x'
+
+          - script: |
+              npm install
+            displayName: Install Dependencies
+
+          # Run tests
+          - script: |
+              npm test
+            displayName: Run Tests
+
+          # Publish test results
+          - task: PublishTestResults@2
+            displayName: Publish Test Results
+            inputs:
+              testResultsFiles: '**/test-results.xml' # Update with the path to your test result files
+              testRunTitle: 'Node.js Unit Tests'
+
+
 #this part triggers error
   - stage: Deploy
     displayName: Deploy to Azure Container Instances (ACI)
